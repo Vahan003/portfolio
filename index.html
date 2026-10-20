@@ -1163,6 +1163,213 @@
         background: #000;
       }
 
+      /* ============================== video player ==============================
+         Auto-mounted: each .video-frame that declares
+         <video src="videos/<name>.mp4" preload="none" playsinline loop>
+         probes the file when it scrolls near. If the file exists the frame
+         flips to .is-live and shows this themed player; otherwise the
+         dashed "footage pending" placeholder stays as it was.            */
+      .video-frame video {
+        display: none;
+      }
+      .video-frame.is-live {
+        display: block;
+        border: 1px solid var(--line);
+        background: #000;
+        overflow: hidden;
+        cursor: pointer;
+      }
+      .video-frame.is-live video {
+        display: block;
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        aspect-ratio: auto;
+        border: none;
+        object-fit: contain;
+        background: #000;
+      }
+      .video-frame.is-live > .play,
+      .video-frame.is-live > .video-title,
+      .video-frame.is-live > .video-hint {
+        display: none;
+      }
+      .video-frame.is-live::before,
+      .video-frame.is-live::after {
+        content: none;
+      }
+      .vp-overlay,
+      .vp-file,
+      .vp-bar {
+        display: none;
+      }
+      .video-frame.is-live .vp-overlay {
+        display: flex;
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 0;
+        border: none;
+        background: linear-gradient(
+          0deg,
+          rgba(var(--bg-rgb), 0.55) 0%,
+          rgba(var(--bg-rgb), 0.1) 55%,
+          rgba(var(--bg-rgb), 0.4) 100%
+        );
+        cursor: pointer;
+        transition: opacity 0.35s var(--ease);
+      }
+      .video-frame.is-live .vp-big {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        border: 1px solid var(--acid);
+        background: rgba(var(--bg-rgb), 0.72);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        color: var(--acid);
+        transition: all 0.35s var(--ease);
+      }
+      .vp-overlay:hover .vp-big {
+        background: var(--acid);
+        color: var(--bg);
+      }
+      .video-frame.is-playing .vp-overlay {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .video-frame.is-live .vp-file {
+        display: block;
+        position: absolute;
+        top: 10px;
+        left: 12px;
+        z-index: 3;
+        padding: 3px 8px;
+        border: 1px solid var(--line);
+        background: rgba(var(--bg-rgb), 0.72);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        font-family: var(--mono);
+        font-size: 0.58rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+        opacity: 0;
+        transition: opacity 0.3s var(--ease);
+      }
+      .video-frame.is-live .vp-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 4;
+        padding: 8px 10px;
+        background: rgba(var(--bg-rgb), 0.82);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border-top: 1px solid var(--line);
+        opacity: 0;
+        transform: translateY(4px);
+        transition:
+          opacity 0.3s var(--ease),
+          transform 0.3s var(--ease);
+      }
+      .video-frame.is-live:hover .vp-bar,
+      .video-frame.is-live:focus-within .vp-bar,
+      .video-frame.is-live:not(.is-playing) .vp-bar {
+        opacity: 1;
+        transform: none;
+      }
+      .video-frame.is-live:hover .vp-file,
+      .video-frame.is-live:focus-within .vp-file,
+      .video-frame.is-live:not(.is-playing) .vp-file {
+        opacity: 1;
+      }
+      .vp-btn {
+        flex: none;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid transparent;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        transition:
+          color 0.3s,
+          border-color 0.3s;
+      }
+      .vp-btn:hover {
+        color: var(--acid);
+        border-color: var(--line2);
+      }
+      .vp-time {
+        flex: none;
+        font-family: var(--mono);
+        font-size: 0.6rem;
+        letter-spacing: 0.08em;
+        color: var(--dim);
+        white-space: nowrap;
+      }
+      .vp-time b {
+        color: var(--muted);
+        font-weight: 500;
+      }
+      .vp-seek {
+        -webkit-appearance: none;
+        appearance: none;
+        flex: 1;
+        min-width: 40px;
+        height: 14px;
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        cursor: ew-resize;
+      }
+      .vp-seek::-webkit-slider-runnable-track {
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          var(--acid) 0 calc(var(--p, 0) * 100%),
+          var(--line2) calc(var(--p, 0) * 100%) 100%
+        );
+      }
+      .vp-seek::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 9px;
+        height: 9px;
+        margin-top: -3.5px;
+        border: none;
+        border-radius: 0;
+        background: var(--acid);
+      }
+      .vp-seek::-moz-range-track {
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          var(--acid) 0 calc(var(--p, 0) * 100%),
+          var(--line2) calc(var(--p, 0) * 100%) 100%
+        );
+      }
+      .vp-seek::-moz-range-thumb {
+        width: 9px;
+        height: 9px;
+        border: none;
+        border-radius: 0;
+        background: var(--acid);
+      }
+
       .log-end {
         margin-top: clamp(36px, 5vh, 52px);
         padding-top: 26px;
@@ -1464,11 +1671,6 @@
           opacity: 1;
           transform: none;
         }
-        h1 .caret,
-        .nav-status i,
-        .fact .v i {
-          animation: none;
-        }
       }
     </style>
   </head>
@@ -1761,7 +1963,6 @@
             <dd>Browser-based tactical third-person arena shooter</dd>
             <dt>Sim</dt>
             <dd>Fixed 60 Hz deterministic tick <i>· client and server</i></dd>
-            <dt>Render</dt>
             <dt>Stack</dt>
             <dd>
               TypeScript · React Three Fiber · Three.js · C++/WASM (Emscripten)
@@ -1824,9 +2025,9 @@
                   on screen.
                 </p>
 
-                <!-- EDIT: replace slot with <video src="videos/deadzone_gameplay_intro.mp4" muted loop playsinline controls></video> -->
                 <figure class="video-slot reveal">
                   <div class="video-frame">
+                    <video src="videos/deadzone_gameplay_intro.mp4" preload="none" playsinline loop></video>
                     <span class="play">▶</span>
                     <span class="video-title">deadzone_gameplay_intro.mp4</span>
                     <span class="video-hint"
@@ -2160,9 +2361,9 @@
                   <code class="ic">Bullets.tsx</code>.
                 </p>
 
-                <!-- EDIT: replace slot with <video src="videos/billboard_aim_demo.mp4" muted loop playsinline controls></video> -->
                 <figure class="video-slot reveal">
                   <div class="video-frame">
+                    <video src="videos/billboard_aim_demo.mp4" preload="none" playsinline loop></video>
                     <span class="play">▶</span>
                     <span class="video-title">billboard_aim_demo.mp4</span>
                     <span class="video-hint"
@@ -2229,9 +2430,9 @@
                   shooters.
                 </p>
 
-                <!-- EDIT: replace slot with <video src="videos/hud_and_menu_overlays.mp4" muted loop playsinline controls></video> -->
                 <figure class="video-slot reveal">
                   <div class="video-frame">
+                    <video src="videos/hud_and_menu_overlays.mp4" preload="none" playsinline loop></video>
                     <span class="play">▶</span>
                     <span class="video-title">hud_and_menu_overlays.mp4</span>
                     <span class="video-hint"
@@ -2317,9 +2518,9 @@ src.start(0);</pre>
                   is actually invoked to make a sound.
                 </p>
 
-                <!-- EDIT: replace slot with <video src="videos/audio_layer_in_gameplay.mp4" muted loop playsinline controls></video> -->
                 <figure class="video-slot reveal">
                   <div class="video-frame">
+                    <video src="videos/audio_layer_in_gameplay.mp4" preload="none" playsinline loop></video>
                     <span class="play">▶</span>
                     <span class="video-title">audio_layer_in_gameplay.mp4</span>
                     <span class="video-hint"
@@ -2387,9 +2588,9 @@ src.start(0);</pre>
                   a line segment against every wall and collider in the world.
                 </p>
 
-                <!-- EDIT: replace slot with <video src="videos/swept_collision_anti_tunneling.mp4" muted loop playsinline controls></video> -->
                 <figure class="video-slot reveal">
                   <div class="video-frame">
+                    <video src="videos/swept_collision_anti_tunneling.mp4" preload="none" playsinline loop></video>
                     <span class="play">▶</span>
                     <span class="video-title"
                       >swept_collision_anti_tunneling.mp4</span
@@ -2522,9 +2723,9 @@ src.start(0);</pre>
                   exits a sphere.
                 </p>
 
-                <!-- EDIT: replace slot with <video src="videos/body_part_hits_demo.mp4" muted loop playsinline controls></video> -->
                 <figure class="video-slot reveal">
                   <div class="video-frame">
+                    <video src="videos/body_part_hits_demo.mp4" preload="none" playsinline loop></video>
                     <span class="play">▶</span>
                     <span class="video-title">body_part_hits_demo.mp4</span>
                     <span class="video-hint"
@@ -2653,9 +2854,9 @@ src.start(0);</pre>
                   and shots; the physics twin of a visible object.
                 </p>
 
-                <!-- EDIT: replace slot with <video src="videos/follow_camera_and_wall_clamp.mp4" muted loop playsinline controls></video> -->
                 <figure class="video-slot reveal">
                   <div class="video-frame">
+                    <video src="videos/follow_camera_and_wall_clamp.mp4" preload="none" playsinline loop></video>
                     <span class="play">▶</span>
                     <span class="video-title"
                       >follow_camera_and_wall_clamp.mp4</span
@@ -2714,9 +2915,9 @@ b.dy -= (9.8 * dt) / b.spd;</pre
                   >
                 </figure>
 
-                <!-- EDIT: replace slot with <video src="videos/bullet_drop_demo.mp4" muted loop playsinline controls></video> -->
                 <figure class="video-slot reveal">
                   <div class="video-frame">
+                    <video src="videos/bullet_drop_demo.mp4" preload="none" playsinline loop></video>
                     <span class="play">▶</span>
                     <span class="video-title">bullet_drop_demo.mp4</span>
                     <span class="video-hint"
@@ -2910,9 +3111,9 @@ nextIndex = (nextIndex + 1) % pool.size;</pre>
                   changes.
                 </p>
 
-                <!-- EDIT: replace slot with <video src="videos/lighting_shadows_occlusion_demo.mp4" muted loop playsinline controls></video> -->
                 <figure class="video-slot reveal">
                   <div class="video-frame">
+                    <video src="videos/lighting_shadows_occlusion_demo.mp4" preload="none" playsinline loop></video>
                     <span class="play">▶</span>
                     <span class="video-title"
                       >lighting_shadows_occlusion_demo.mp4</span
@@ -3023,9 +3224,9 @@ nextIndex = (nextIndex + 1) % pool.size;</pre>
                   into left and right versions.
                 </p>
 
-                <!-- EDIT: replace slot with <video src="videos/character_animations_roll.mp4" muted loop playsinline controls></video> -->
                 <figure class="video-slot reveal">
                   <div class="video-frame">
+                    <video src="videos/character_animations_roll.mp4" preload="none" playsinline loop></video>
                     <span class="play">▶</span>
                     <span class="video-title"
                       >character_animations_roll.mp4</span
@@ -3348,9 +3549,9 @@ nextIndex = (nextIndex + 1) % pool.size;</pre>
                   duplicates.
                 </p>
 
-                <!-- EDIT: replace slot with <video src="videos/remote_players_interpolation.mp4" muted loop playsinline controls></video> -->
                 <figure class="video-slot reveal">
                   <div class="video-frame">
+                    <video src="videos/remote_players_interpolation.mp4" preload="none" playsinline loop></video>
                     <span class="play">▶</span>
                     <span class="video-title"
                       >remote_players_interpolation.mp4</span
@@ -3632,9 +3833,9 @@ posHistory.push({
                   function, where values are shared by everything in that file.
                 </p>
 
-                <!-- EDIT: replace slot with <video src="videos/deterministic_spread_demo.mp4" muted loop playsinline controls></video> -->
                 <figure class="video-slot reveal">
                   <div class="video-frame">
+                    <video src="videos/deterministic_spread_demo.mp4" preload="none" playsinline loop></video>
                     <span class="play">▶</span>
                     <span class="video-title"
                       >deterministic_spread_demo.mp4</span
@@ -3744,9 +3945,9 @@ posHistory.push({
                   missed.
                 </p>
 
-                <!-- EDIT: replace slot with <video src="videos/server_debug_viewer.mp4" muted loop playsinline controls></video> -->
                 <figure class="video-slot reveal">
                   <div class="video-frame">
+                    <video src="videos/server_debug_viewer.mp4" preload="none" playsinline loop></video>
                     <span class="play">▶</span>
                     <span class="video-title">server_debug_viewer.mp4</span>
                     <span class="video-hint"
@@ -3814,9 +4015,9 @@ posHistory.push({
                   spikes.
                 </p>
 
-                <!-- EDIT: replace slot with <video src="videos/frame_timeline_monitor.mp4" muted loop playsinline controls></video> -->
                 <figure class="video-slot reveal">
                   <div class="video-frame">
+                    <video src="videos/frame_timeline_monitor.mp4" preload="none" playsinline loop></video>
                     <span class="play">▶</span>
                     <span class="video-title">frame_timeline_monitor.mp4</span>
                     <span class="video-hint"
@@ -4148,6 +4349,17 @@ posHistory.push({
         var reduced = window.matchMedia(
           "(prefers-reduced-motion: reduce)",
         ).matches;
+
+        var MOTION = reduced ? 0.25 : 1;
+
+        (function () {
+          var mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+          var onChange = function (e) {
+            MOTION = e.matches ? 0.25 : 1;
+          };
+          if (mq.addEventListener) mq.addEventListener("change", onChange);
+          else if (mq.addListener) mq.addListener(onChange);
+        })();
 
         var nav = document.getElementById("nav");
         var progress = document.getElementById("progress");
@@ -6586,11 +6798,6 @@ posHistory.push({
               THEMES[name].base[2],
             );
             AudioFX.sweep();
-            if (reduced) {
-              mat.uniforms.uAccent.value.copy(glowTarget);
-              mat.uniforms.uBase.value.copy(baseTarget);
-              renderer.render(scene, camera);
-            }
           }
           themeSwatches.forEach(function (s) {
             s.addEventListener("click", function () {
@@ -6680,7 +6887,7 @@ posHistory.push({
           });
 
           function setMagnify(on) {
-            if (reduced || magnified === on) return;
+            if (magnified === on) return;
             magnified = on;
             zoomTarget = on ? 1.22 : 1;
             if (hint) hint.classList.toggle("mag", on);
@@ -6691,14 +6898,13 @@ posHistory.push({
             heavy: { R: 2.0, S: 1.04, F: 0.76 },
           };
           function doBlast(cx, cy) {
-            if (reduced) return;
             toNDC(cx, cy);
             updateMouseLocal();
             if (mouseL.x > 9000) return;
             var p = magnified ? SHOT.heavy : SHOT.light;
             impacts.push({ x: mouseL.x, y: mouseL.y, R: p.R, S: p.S, F: p.F });
-            kickV -= p.S * 0.55;
-            rotKV -= p.S * 0.08;
+            kickV -= p.S * 0.55 * MOTION;
+            rotKV -= p.S * 0.08 * MOTION;
             AudioFX.shoot(magnified);
             var ring = document.createElement("div");
             ring.className = "click-ring";
@@ -6716,7 +6922,6 @@ posHistory.push({
 
           /* hold right → magnify; left fires at any time, heavy while held */
           canvas.addEventListener("mousedown", function (e) {
-            if (reduced) return;
             if (e.button === 2) {
               setMagnify(true);
             } else if (e.button === 0) {
@@ -6736,7 +6941,7 @@ posHistory.push({
           var touchTimer = null,
             touchMagnified = false;
           canvas.addEventListener("pointerdown", function (e) {
-            if (e.pointerType !== "touch" || reduced) return;
+            if (e.pointerType !== "touch") return;
             e.preventDefault();
             touchTimer = setTimeout(function () {
               touchMagnified = true;
@@ -6863,7 +7068,7 @@ posHistory.push({
                higher force covers more particles, not just pushes harder.
                grab/release transitions are counted per frame and drive
                the event audio 1:1. */
-            var mfx = MF * forceFactor;
+            var mfx = MF * forceFactor * MOTION;
             var effMR = MR * (0.3 + forceFactor * 1.0);
             var effMR2 = effMR * effMR;
             var contactCount = 0,
@@ -6940,16 +7145,19 @@ posHistory.push({
             rotK += rotKV;
 
             group.position.set(userPos.x, userPos.y, kickZ);
-            group.rotation.y = par.x * 0.24 + Math.sin(t0 * 0.14) * 0.05;
+            group.rotation.y =
+              par.x * 0.24 * MOTION + Math.sin(t0 * 0.14) * 0.05 * MOTION;
             group.rotation.x =
-              -par.y * 0.14 + Math.sin(t0 * 0.11) * 0.03 + rotK;
-            group.rotation.z = par.x * -0.05;
+              -par.y * 0.14 * MOTION +
+              Math.sin(t0 * 0.11) * 0.03 * MOTION +
+              rotK;
+            group.rotation.z = par.x * -0.05 * MOTION;
             group.scale.setScalar(
-              userScale * zoomCur * (1 + Math.sin(t0 * 0.5) * 0.004),
+              userScale * zoomCur * (1 + Math.sin(t0 * 0.5) * 0.004 * MOTION),
             );
 
-            camera.position.x = par.x * 0.55;
-            camera.position.y = -par.y * 0.4;
+            camera.position.x = par.x * 0.55 * MOTION;
+            camera.position.y = -par.y * 0.4 * MOTION;
             camera.lookAt(0, 0, 0);
 
             renderer.render(scene, camera);
@@ -6970,26 +7178,307 @@ posHistory.push({
             }
           }
 
-          if (reduced) {
-            renderer.render(scene, camera);
-            readout.innerHTML =
-              "fps <b>···</b> · zoom <b>1.0x</b><br /><span>" +
-              N.toLocaleString("en-US") +
-              " pts</span>";
-            var ctl = document.querySelector(".hero-panel");
-            if (ctl) ctl.style.display = "none";
-            if (hint) hint.style.display = "none";
-            window.addEventListener("resize", function () {
-              renderer.render(scene, camera);
-            });
-          } else {
-            requestAnimationFrame(tick);
-          }
+          requestAnimationFrame(tick);
         } catch (err) {
           canvas.style.display = "none";
           var ro3 = document.getElementById("readout");
           if (ro3) ro3.style.display = "none";
         }
+      })();
+    </script>
+
+    <script>
+      /* ==============================================================
+         VIDEO SLOTS · themed player, auto-mounted
+         Every .video-frame in a .video-slot declares
+         <video src="videos/<name>" preload="none" playsinline loop>.
+         Nothing is fetched until the slot nears the viewport; if the
+         file exists the frame flips to .is-live and the player below
+         takes over, otherwise the "footage pending" placeholder stays.
+        ============================================================== */
+      (function () {
+        "use strict";
+
+        var ICO = {
+          play:
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>',
+          pause:
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>',
+          playBig:
+            '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>',
+          vol:
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" stroke="none"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>',
+          volX:
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" stroke="none"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/></svg>',
+          fs:
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>',
+          fsExit:
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg>',
+        };
+
+        var live = [];
+
+        function fmt(s) {
+          if (!isFinite(s) || s < 0) s = 0;
+          var m = Math.floor(s / 60);
+          var sec = Math.floor(s % 60);
+          return m + ":" + (sec < 10 ? "0" : "") + sec;
+        }
+
+        function pauseOthers(v) {
+          for (var i = 0; i < live.length; i++) {
+            if (live[i] !== v && !live[i].paused) live[i].pause();
+          }
+        }
+        function mount(frame) {
+          if (frame.getAttribute("data-vp")) return;
+          var v = frame.querySelector("video");
+          if (!v) return;
+          frame.setAttribute("data-vp", "1");
+
+          var name = (v.getAttribute("src") || "").split("/").pop();
+
+          /* poster overlay · big play button */
+          var overlay = document.createElement("button");
+          overlay.type = "button";
+          overlay.className = "vp-overlay";
+          overlay.setAttribute("aria-label", "Play " + name);
+          overlay.innerHTML = '<span class="vp-big">' + ICO.playBig + "</span>";
+
+          /* filename tag · top-left */
+          var file = document.createElement("span");
+          file.className = "vp-file";
+          file.textContent = name;
+
+          /* control bar */
+          var bar = document.createElement("div");
+          bar.className = "vp-bar";
+          bar.innerHTML =
+            '<button type="button" class="vp-btn vp-play" aria-label="Play">' +
+            ICO.play +
+            '</button><span class="vp-time"><b>0:00</b><span class="vp-total"> / 0:00</span></span>' +
+            '<input type="range" class="vp-seek" min="0" max="1000" step="1" value="0" aria-label="Seek" />' +
+            '<button type="button" class="vp-btn vp-mute" aria-label="Mute">' +
+            ICO.vol +
+            '</button><button type="button" class="vp-btn vp-fs" aria-label="Fullscreen">' +
+            ICO.fs +
+            "</button>";
+
+          frame.appendChild(overlay);
+          frame.appendChild(file);
+          frame.appendChild(bar);
+
+          var playBtn = bar.querySelector(".vp-play");
+          var muteBtn = bar.querySelector(".vp-mute");
+          var fsBtn = bar.querySelector(".vp-fs");
+          var seek = bar.querySelector(".vp-seek");
+          var curEl = bar.querySelector(".vp-time b");
+          var totEl = bar.querySelector(".vp-total");
+          var seeking = false;
+
+          function paint() {
+            var d = v.duration;
+            var ratio = isFinite(d) && d > 0 ? v.currentTime / d : 0;
+            if (ratio < 0) ratio = 0;
+            if (ratio > 1) ratio = 1;
+            if (!seeking) seek.value = String(Math.round(ratio * 1000));
+            seek.style.setProperty("--p", String(ratio));
+            curEl.textContent = fmt(v.currentTime);
+            if (isFinite(d)) totEl.textContent = " / " + fmt(d);
+          }
+
+          function sync() {
+            var playing = !v.paused && !v.ended;
+            frame.classList.toggle("is-playing", playing);
+            playBtn.innerHTML = playing ? ICO.pause : ICO.play;
+            playBtn.setAttribute("aria-label", playing ? "Pause" : "Play");
+            paint();
+          }
+
+          function syncMute() {
+            var off = v.muted || v.volume === 0;
+            muteBtn.innerHTML = off ? ICO.volX : ICO.vol;
+            muteBtn.setAttribute("aria-label", off ? "Unmute" : "Mute");
+          }
+
+          function toggle() {
+            if (v.paused || v.ended) {
+              var p = v.play();
+              if (p && typeof p.catch === "function") p.catch(function () {});
+            } else {
+              v.pause();
+            }
+          }
+
+          function fsNow() {
+            return (
+              document.fullscreenElement || document.webkitFullscreenElement
+            );
+          }
+
+          function syncFs() {
+            var on = fsNow() === frame;
+            fsBtn.innerHTML = on ? ICO.fsExit : ICO.fs;
+            fsBtn.setAttribute(
+              "aria-label",
+              on ? "Exit fullscreen" : "Fullscreen",
+            );
+          }
+          overlay.addEventListener("click", function (e) {
+            e.stopPropagation();
+            toggle();
+          });
+          v.addEventListener("click", toggle);
+          playBtn.addEventListener("click", toggle);
+
+          muteBtn.addEventListener("click", function () {
+            v.muted = !v.muted;
+          });
+
+          fsBtn.addEventListener("click", function () {
+            if (fsNow()) {
+              if (document.exitFullscreen) document.exitFullscreen();
+              else if (document.webkitExitFullscreen)
+                document.webkitExitFullscreen();
+            } else if (frame.requestFullscreen) {
+              frame.requestFullscreen();
+            } else if (frame.webkitRequestFullscreen) {
+              frame.webkitRequestFullscreen();
+            }
+          });
+          document.addEventListener("fullscreenchange", syncFs);
+          document.addEventListener("webkitfullscreenchange", syncFs);
+
+          seek.addEventListener("input", function () {
+            seeking = true;
+            var d = v.duration;
+            var ratio = seek.value / 1000;
+            if (isFinite(d) && d > 0) v.currentTime = ratio * d;
+            seek.style.setProperty("--p", String(ratio));
+            curEl.textContent = fmt(ratio * (isFinite(d) ? d : 0));
+            if (isFinite(d)) totEl.textContent = " / " + fmt(d);
+          });
+          seek.addEventListener("pointerdown", function () {
+            seeking = true;
+          });
+          window.addEventListener("pointerup", function () {
+            if (seeking) {
+              seeking = false;
+              paint();
+            }
+          });
+
+          v.addEventListener("loadedmetadata", function () {
+            frame.classList.add("is-live");
+            paint();
+          });
+          v.addEventListener("error", function () {
+            /* file unreadable or removed: keep / restore the placeholder */
+            if (frame.classList.contains("is-live")) {
+              frame.classList.remove("is-live", "is-playing");
+              var hint = frame.querySelector(".video-hint");
+              if (hint) hint.textContent = "video unavailable · check file";
+            }
+          });
+          v.addEventListener("play", function () {
+            pauseOthers(v);
+          });
+          v.addEventListener("play", sync);
+          v.addEventListener("pause", sync);
+          v.addEventListener("ended", sync);
+          v.addEventListener("timeupdate", paint);
+          v.addEventListener("durationchange", paint);
+          v.addEventListener("seeked", function () {
+            seeking = false;
+            paint();
+          });
+          v.addEventListener("volumechange", syncMute);
+
+          /* keyboard · space/k play · m mute · f fullscreen · ←/→ seek */
+          frame.setAttribute("tabindex", "0");
+          frame.addEventListener("keydown", function (e) {
+            if (
+              e.target &&
+              e.target.tagName === "BUTTON" &&
+              (e.key === " " || e.key === "k")
+            ) {
+              return; /* the focused button activates itself */
+            }
+            if (e.key === " " || e.key === "k") {
+              e.preventDefault();
+              toggle();
+            } else if (e.key === "m") {
+              v.muted = !v.muted;
+            } else if (e.key === "f") {
+              fsBtn.click();
+            } else if (e.target !== seek && e.key === "ArrowLeft") {
+              e.preventDefault();
+              v.currentTime = Math.max(0, v.currentTime - 5);
+            } else if (e.target !== seek && e.key === "ArrowRight") {
+              e.preventDefault();
+              if (isFinite(v.duration))
+                v.currentTime = Math.min(v.duration, v.currentTime + 5);
+            }
+          });
+
+          live.push(v);
+          sync();
+          syncMute();
+
+          /* probe the file now that the slot is near the viewport */
+          v.preload = "metadata";
+          try {
+            v.load();
+          } catch (e) {}
+        }
+
+        var frames = document.querySelectorAll(".video-frame");
+
+        if (!("IntersectionObserver" in window)) {
+          frames.forEach(function (f) {
+            mount(f);
+          });
+          return;
+        }
+
+        /* mount (probe) when the slot approaches the viewport */
+        var mo = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (e) {
+              if (e.isIntersecting) {
+                mount(e.target);
+                mo.unobserve(e.target);
+              }
+            });
+          },
+          { rootMargin: "400px 0px" },
+        );
+
+        /* stop playback once the slot leaves the screen */
+        var vo = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (e) {
+              var vid = e.target.querySelector("video");
+              if (vid && !e.isIntersecting && !vid.paused) vid.pause();
+            });
+          },
+          { threshold: 0 },
+        );
+
+        frames.forEach(function (f) {
+          if (f.querySelector("video")) {
+            mo.observe(f);
+            vo.observe(f);
+          }
+        });
+
+        document.addEventListener("visibilitychange", function () {
+          if (document.hidden) {
+            live.forEach(function (vid) {
+              if (!vid.paused) vid.pause();
+            });
+          }
+        });
       })();
     </script>
   </body>
